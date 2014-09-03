@@ -23,8 +23,8 @@ build:
 
     # Install Stylus
     - npm-install@1.0.5:
-      package: stylus
-      strict-ssl: false
+        package: stylus
+        strict-ssl: false
       
     # Test the project
     - script:
