@@ -14,8 +14,7 @@ build:
           cd $WERCKER_SOURCE_DIR
           go version
           go get -t ./...
-          npm install -g stylus
-          stylus -V
+          npm install -g n
     # Build the project
     - script:
         name: go build
