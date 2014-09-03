@@ -14,13 +14,18 @@ build:
           cd $WERCKER_SOURCE_DIR
           go version
           go get -t ./...
-          npm install -g n
+          
     # Build the project
     - script:
         name: go build
         code: |
           go build ./...
 
+    # Install Stylus
+    - npm-install@1.0.5:
+      package: stylus
+      strict-ssl: false
+      
     # Test the project
     - script:
         name: go test
