@@ -22,7 +22,7 @@ build:
           go build ./...
 
     # Install Stylus
-    - npm-install@1.0.5:
+    - wercker/npm-install@0.9.3:
         package: stylus
         strict-ssl: false
       
