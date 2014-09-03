@@ -1,14 +1,14 @@
 package stylus
 
 import (
+	"bytes"
 	"fmt"
 	"os/exec"
-	"strings"
 )
 
 const stylusCmd = "stylus"
 
-const compSucMsg = "compiled"
+var sucPrefix = []byte{32, 32, 27, 91, 57, 48, 109, 99, 111, 109, 112, 105, 108, 101, 100, 27, 91, 48, 109, 32}
 
 // Compile compiles the Stylus file of the specified path and
 // returns two channles: One returns the path of the compiled
@@ -29,32 +29,18 @@ func Compile(path string) (<-chan string, <-chan error) {
 			return
 		}
 
-		tokens := strings.Split(strings.TrimSpace(string(out)), " ")
-
-		if len(tokens) < 2 {
-			errc <- fmt.Errorf("command's output is invalid [out: %v]", tokens)
+		if !bytes.HasPrefix(out, sucPrefix) {
+			errc <- fmt.Errorf("command's output message should have prefix %q [actual: %q]", string(sucPrefix), string(out))
 			return
 		}
 
-		msg := strings.TrimRight(
-			strings.TrimLeft(
-				tokens[0],
-				string([]byte{27, 91, 57, 48, 109}),
-			),
-			string([]byte{27, 91, 48, 109}),
-		)
-
-		if msg != compSucMsg {
-			errc <- fmt.Errorf("command's output message should be %s [actual: %s]", compSucMsg, msg)
-			return
-		}
-
-		pathc <- tokens[1]
+		pathc <- string(bytes.TrimSpace(bytes.TrimPrefix(out, sucPrefix)))
 	}()
 
 	return pathc, errc
 }
 
+// execCmd executes the Stylus command.
 func execCmd(path string) (<-chan []byte, <-chan error) {
 	outc := make(chan []byte)
 	errc := make(chan error)
