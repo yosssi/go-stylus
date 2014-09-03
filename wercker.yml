@@ -14,6 +14,7 @@ build:
           cd $WERCKER_SOURCE_DIR
           go version
           go get -t ./...
+          sudo npm install -g stylus
           
     # Build the project
     - script:
@@ -21,11 +22,6 @@ build:
         code: |
           go build ./...
 
-    # Install Stylus
-    - wercker/npm-install@0.9.3:
-        package: stylus
-        strict-ssl: false
-      
     # Test the project
     - script:
         name: go test
